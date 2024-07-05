@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+    backend:
+        image: node:16-alpine
+        container_name: backend
+        working_dir: /app
+        environment:
+            - AMOCRM_USERNAME=bigfatpeach
+            - AMOCRM_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjgwODY5N2Q5YTk0OGUxMWU5MjhiYTU5N2MzNzkxZTQ5NzNiZTYzNjQ4MTllZjMzMjg5Njg1NzkxODMzYmFkMjNjNTg3ZTQwZDJhM2JlNjgxIn0.eyJhdWQiOiI4YjNlNTk5Yy00NGVmLTQ3M2MtODRmMy1kZTZhODBlMmM5MjgiLCJqdGkiOiI4MDg2OTdkOWE5NDhlMTFlOTI4YmE1OTdjMzc5MWU0OTczYmU2MzY0ODE5ZWYzMzI4OTY4NTc5MTgzM2JhZDIzYzU4N2U0MGQyYTNiZTY4MSIsImlhdCI6MTcyMDEzMjU4MCwibmJmIjoxNzIwMTMyNTgwLCJleHAiOjE3MjIzODQwMDAsInN1YiI6IjExMjM2NzU4IiwiZ3JhbnRfdHlwZSI6IiIsImFjY291bnRfaWQiOjMxODMzMjg2LCJiYXNlX2RvbWFpbiI6ImFtb2NybS5ydSIsInZlcnNpb24iOjIsInNjb3BlcyI6WyJjcm0iLCJmaWxlcyIsImZpbGVzX2RlbGV0ZSIsIm5vdGlmaWNhdGlvbnMiLCJwdXNoX25vdGlmaWNhdGlvbnMiXSwiaGFzaF91dWlkIjoiYmU5MDg4YzItNDI4Yi00ZWE0LTljYTYtZjk1NjNkM2I1YmQzIn0.aS-1vocAX0ePB7Obrbegmn9IaccLO_OZ7CY-UvQ28M5A0OSthXj24TsHhdGzyP4NT0h8a9MoXX3Nt9UeUJdDM_-ORsj7kxI6-LObqQtsFgqyWVLPdP2Kq300rAYRJ6KIvLkAwu1bVV1LglgJCO1350iIaB7CJbfb24aNuQCiQ980IjYUNKcMhJ0mf62N-_hGAFxbOlYyxFKeZXgVoPMksiNfPt8y6vOP7xxYVGH4FRZ_QGSCHbO6aE8jDKjf4acczTLrkXKBYEzXG7WVF5K9yFw6DazvHqeQA3tBi0TxyqAPcwDGDB61wjtYVNSpo6CU_bJb8G7-hxQcugXvCsFAQw
+            - FRONTEND_URL=http://localhost:5173
+        ports:
+            - '3000:3000'
+        volumes:
+            - ./backend:/app
+        command: sh -c "npm install && npm run build && npm run start:prod"
+        networks:
+            - app-network
+
+    frontend:
+        image: node:16-alpine
+        container_name: frontend
+        working_dir: /app
+        environment:
+            - BACKEND_URL=http://localhost:3000
+        ports:
+            - '5173:5173'
+        volumes:
+            - ./frontend:/app
+        command: sh -c "npm install && npm run dev -- --host --port 5173"
+        networks:
+            - app-network
+
+networks:
+    app-network:
+        driver: bridge
